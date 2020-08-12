@@ -142,6 +142,7 @@
 
         <ImageView
             android:id="@+id/shuffle"
+            android:alpha="87"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/skip_prev_btn"
@@ -160,6 +161,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
             android:src="@drawable/repeat_no" />
+
 
 
 
