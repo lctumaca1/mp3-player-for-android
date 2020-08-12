@@ -206,8 +206,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             File dir = new File(sdPath + "/Music/");
             File[] files = dir.listFiles();
             SongDetail obj = null;
+            Log.d("LOG_ME", dir.exists() + "");
             for(File song : files) {
-                if(!song.getName().contains(".")) {
+                if(!song.getName().substring(0, 1).equals(".")) {
+                    Log.d("LOG_ME_HOHO", song.toString());
                     obj = new SongDetail();
                     if(song.isDirectory()) {
                         String[] str = song.getName().split(" - ");
