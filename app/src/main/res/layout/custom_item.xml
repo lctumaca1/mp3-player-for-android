@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:background="@color/colorPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="@color/colorPrimary">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingLeft="10dp"
+        android:layout_height="80dp">
+
+        <ImageView
+            android:id="@+id/custom_img"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/changes_thumnail"/>
+
+        <TextView
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/custom_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Luav - Changes (Offical Video)"
+            android:textColor="@color/colorWhite"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/custom_img"/>
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:id="@+id/custom_writer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Luav"
+            android:textColor="@color/colorLightWhite"
+            android:textSize="15sp"
+            android:layout_below="@+id/custom_title"
+            android:layout_toRightOf="@+id/custom_img"
+            />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
