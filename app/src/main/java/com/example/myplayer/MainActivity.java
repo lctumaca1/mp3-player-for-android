@@ -36,19 +36,24 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageView play_btn, skip_next, skip_prev;
+    private ImageView play_btn, skip_next, skip_prev, shuffle, repeat;
     TextView song_title, song_writer, start_time, end_time;
     private RecyclerView recyclerView;
     private CustomAdapter customAdapter;
     SeekBar seekbar;
     //?
     private static ArrayList<SongDetail> mediaList = new ArrayList<SongDetail>();
+    private static ArrayList<SongDetail> shuffleList = new ArrayList<SongDetail>();
     private boolean isPlaying = false;
-    private static int idx = 0;
+    private boolean isShuffle = false;
+    private boolean isRepeat = false;
+    int idx = 0;
 
     final Handler handler = new Handler() {
         @Override
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 seekbar.setProgress(MyPlayer.getInstance().getCurrentPosition());
 
                 try {
-                    MyThread.sleep(1000);
+                    MyThread.sleep(100);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -92,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         play_btn = (ImageView)findViewById(R.id.play_btn);
         skip_next = (ImageView)findViewById(R.id.skip_next_btn);
         skip_prev = (ImageView)findViewById(R.id.skip_prev_btn);
+        shuffle = (ImageView)findViewById(R.id.shuffle);
+        repeat = (ImageView)findViewById(R.id.repeat);
         song_title = (TextView)findViewById(R.id.song_title);
         song_writer = (TextView)findViewById(R.id.song_writer);
         seekbar = (SeekBar)findViewById(R.id.seekbar);
@@ -110,12 +117,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         play_btn.setOnClickListener(this);
         skip_next.setOnClickListener(this);
         skip_prev.setOnClickListener(this);
+        shuffle.setOnClickListener(this);
+        repeat.setOnClickListener(this);
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(seekBar.getMax() == progress) {
-                    pause();
+                if(progress >= seekBar.getMax()) {
+                    if(isRepeat) {
+                        skipNext();
+                    } else {
+                        pause();
+                    }
                 }
             }
 
@@ -139,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         checkSelfPermission();
         fillData();
+        fillShuffleList();
+
+        for(SongDetail a : shuffleList) {
+            Log.d("LOG_ME_HAHA_SHUFFLE", a.toString());
+        }
 
         //
 
@@ -154,17 +172,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(mediaList.size() > 0) {
             setPlayer(idx);
-        }   
-        Log.d("LOG_ME", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
+        }
+        Log.d("LOG_ME_HAHA", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
     }
 
     public void setPlayer(int idx) {
-        MyPlayer.getInstance().setSource(mediaList.get(idx).getSong_path()).prepare();
-        song_title.setText(mediaList.get(idx).getSong_name());
-        song_writer.setText(mediaList.get(idx).getSong_writer());
-
-        end_time.setText(String.format("%02d:%02d", (MyPlayer.getInstance().getDuration()  % (1000 * 60 * 60)) / (1000 * 60),  (((MyPlayer.getInstance().getDuration() % (1000 * 60 * 60)) % (1000 * 60)) / 1000)   ));
-        this.idx = idx;
+        if(isShuffle) {
+            MyPlayer.getInstance().setSource(shuffleList.get(idx).getSong_path()).prepare();
+            song_title.setText(shuffleList.get(idx).getSong_name());
+            song_writer.setText(shuffleList.get(idx).getSong_writer());
+            end_time.setText(String.format("%02d:%02d", (MyPlayer.getInstance().getDuration()  % (1000 * 60 * 60)) / (1000 * 60),  (((MyPlayer.getInstance().getDuration() % (1000 * 60 * 60)) % (1000 * 60)) / 1000)   ));
+        } else {
+            MyPlayer.getInstance().setSource(mediaList.get(idx).getSong_path()).prepare();
+            song_title.setText(mediaList.get(idx).getSong_name());
+            song_writer.setText(mediaList.get(idx).getSong_writer());
+            end_time.setText(String.format("%02d:%02d", (MyPlayer.getInstance().getDuration()  % (1000 * 60 * 60)) / (1000 * 60),  (((MyPlayer.getInstance().getDuration() % (1000 * 60 * 60)) % (1000 * 60)) / 1000)   ));
+        }
     }
 
 
@@ -256,6 +279,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             skipNext();
         } else if(v == skip_prev) {
             skipPrev();
+        } else if(v == shuffle) {
+            if(isShuffle) { //no 셔플
+                isShuffle = false;
+                shuffle.setImageDrawable(getDrawable(R.drawable.shuffle_no));
+            } else { //셔플
+                isShuffle = true;
+
+                shuffle.setImageDrawable(getDrawable(R.drawable.shuffle));
+            }
+        } else if(v == repeat) {
+            if(isRepeat) { //no repeat
+                isRepeat = false;
+                repeat.setImageDrawable(getDrawable(R.drawable.repeat_no));
+            } else { //repeat
+                isRepeat = true;
+
+                repeat.setImageDrawable(getDrawable(R.drawable.repeat));
+            }
         }
     }
 
@@ -275,19 +316,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void skipNext() {
-        if(idx + 1 > mediaList.size() - 1) {
+
+        this.idx += 1;
+        if(idx >= mediaList.size()) {
             idx = 0;
-        } else {
-            ++idx;
         }
         MyPlayer.getInstance().reset();
         setPlayer(idx);
         play();
 
-        Log.d("LOG_ME", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
     }
 
     public void skipPrev() {
+
         if(idx -1 < 0) {
             idx = mediaList.size() - 1;
         } else {
@@ -297,8 +338,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MyPlayer.getInstance().reset();
         setPlayer(idx);
         play();
+        Log.d("LOG_ME_HAHA", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
 
-        Log.d("LOG_ME", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
+
+    }
+
+    public void fillShuffleList() {
+        for(int i = 0; i < mediaList.size(); i++) {
+            shuffleList.add(mediaList.get(i));
+        }
+        long seed = System.nanoTime();
+        Collections.shuffle(shuffleList, new Random(seed));
+
+
     }
 
 
@@ -310,6 +362,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fillData();
         customAdapter.notifyDataSetChanged();
     }
+
+
 
 
 }
