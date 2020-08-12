@@ -141,7 +141,6 @@
             android:layout_marginRight="20dp"/>
 
         <ImageView
-            android:visibility="invisible"
             android:id="@+id/shuffle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,11 +148,10 @@
             android:layout_below="@+id/seekbar"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/shuffle"
+            android:src="@drawable/shuffle_no"
             android:layout_marginRight="20dp"/>
 
         <ImageView
-            android:visibility="invisible"
             android:id="@+id/repeat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -161,7 +159,7 @@
             android:layout_below="@+id/seekbar"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/shuffle" />
+            android:src="@drawable/repeat_no" />
 
 
 

@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(mediaList.size() > 0) {
             setPlayer(idx);
-        }
+        }   
         Log.d("LOG_ME", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
     }
 
