@@ -48,11 +48,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomHolder> {
             public void onClick(View view) {
 
                 cardPos = holder.getBindingAdapterPosition();
-                Log.d("LOG_ME", cardPos + "");
 
                 MyPlayer.getInstance().reset();
 
                 if(context instanceof MainActivity) {
+                    ((MainActivity) context).releaseShuffle();
+                    ((MainActivity) context).setIdx(cardPos);
                     ((MainActivity) context).setPlayer(cardPos);
                     ((MainActivity) context).play();
                 }

@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             while(isPlaying) {
                 handler.sendEmptyMessage(0);
                 seekbar.setProgress(MyPlayer.getInstance().getCurrentPosition());
-
+                Log.d("LOG_ME_THREAD", seekbar.getMax() + ", " + seekbar.getProgress());
                 try {
-                    MyThread.sleep(100);
+                    MyThread.sleep(1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -123,9 +123,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(progress >= seekBar.getMax()) {
+
+                if((progress) >= (seekBar.getMax() - 100)) {
+                    pause();
+
                     if(isRepeat) {
-                        skipNext();
+                        do {
+                            skipNext();
+                        } while(false);
                     } else {
                         pause();
                     }
@@ -155,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fillShuffleList();
 
         for(SongDetail a : shuffleList) {
-            Log.d("LOG_ME_HAHA_SHUFFLE", a.toString());
+            Log.d("LOG_ME_SHUFFLE", a.toString());
         }
 
         //
@@ -173,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(mediaList.size() > 0) {
             setPlayer(idx);
         }
-        Log.d("LOG_ME_HAHA", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
     }
 
     public void setPlayer(int idx) {
@@ -182,14 +186,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             song_title.setText(shuffleList.get(idx).getSong_name());
             song_writer.setText(shuffleList.get(idx).getSong_writer());
             end_time.setText(String.format("%02d:%02d", (MyPlayer.getInstance().getDuration()  % (1000 * 60 * 60)) / (1000 * 60),  (((MyPlayer.getInstance().getDuration() % (1000 * 60 * 60)) % (1000 * 60)) / 1000)   ));
+            Log.d("LOG_ME_IDX", "SHUFFLE -> curr idx : " + idx + ", max idx : " + (shuffleList.size() - 1) + ", song : " + (shuffleList.get(idx).getSong_name()));
         } else {
             MyPlayer.getInstance().setSource(mediaList.get(idx).getSong_path()).prepare();
             song_title.setText(mediaList.get(idx).getSong_name());
             song_writer.setText(mediaList.get(idx).getSong_writer());
             end_time.setText(String.format("%02d:%02d", (MyPlayer.getInstance().getDuration()  % (1000 * 60 * 60)) / (1000 * 60),  (((MyPlayer.getInstance().getDuration() % (1000 * 60 * 60)) % (1000 * 60)) / 1000)   ));
+            Log.d("LOG_ME_IDX", "GENERATE -> curr idx : " + idx + ", max idx : " + (mediaList.size() - 1) + ", song : " + (mediaList.get(idx).getSong_name()));
         }
+
     }
 
+    public void releaseShuffle() {
+        isShuffle = false;
+        shuffle.setImageDrawable(getDrawable(R.drawable.shuffle_no));
+    }
 
 
     public static void fillData() {
@@ -285,7 +296,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 shuffle.setImageDrawable(getDrawable(R.drawable.shuffle_no));
             } else { //셔플
                 isShuffle = true;
-
                 shuffle.setImageDrawable(getDrawable(R.drawable.shuffle));
             }
         } else if(v == repeat) {
@@ -316,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void skipNext() {
-
+        Log.d("LOG_ME_TYPE", "shuffle : " + isShuffle + ", repeat : " + isRepeat);
         this.idx += 1;
         if(idx >= mediaList.size()) {
             idx = 0;
@@ -325,6 +335,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setPlayer(idx);
         play();
 
+
+    }
+
+    public void setIdx(int idx) {
+        this.idx = idx;
     }
 
     public void skipPrev() {
@@ -338,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MyPlayer.getInstance().reset();
         setPlayer(idx);
         play();
-        Log.d("LOG_ME_HAHA", idx + ", " + (mediaList != null ? mediaList.size() - 1 : ""));
 
 
     }
