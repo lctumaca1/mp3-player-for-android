@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:text="Luav - Changes (Offical Video)"
             android:textColor="@color/colorWhite"
-            android:textSize="15sp"
+            android:textSize="17sp"
             android:layout_toRightOf="@+id/custom_img"/>
 
         <TextView

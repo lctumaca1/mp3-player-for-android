@@ -97,7 +97,6 @@
             android:text="this is song title"
             android:layout_above="@+id/song_writer"
             android:layout_centerHorizontal="true"
-
             android:textSize="20sp"/>
 
         <TextView
@@ -106,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/seekbar"
             android:text="this is song writer"
+            android:textSize="16sp"
             android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true"
             />
